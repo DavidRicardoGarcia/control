@@ -88,8 +88,8 @@ void seti3(CAN_FRAME *frame) {
 void loop() {
 
 float a=101;
-      an=String(a,HEX);
-   Serial.println(an);
+  // an=String(a,HEX);
+  // Serial.println(an);
   while(Serial.available()>0){
     char a=Serial.read();
     inString += a;

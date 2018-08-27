@@ -88,7 +88,7 @@ void setsoc(CAN_FRAME *frame) {
 
 
 void loop() {
-SendDataSensores(0x01,-10000000);
+SendDataSensores(0x06,-10000000);
 //float a=101;
 //      an=String(a,HEX);
 //   Serial.println(an);
