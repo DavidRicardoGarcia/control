@@ -15,6 +15,8 @@ String inString="";
 String an=" ";
 float pm=0,qm=0,soc=0;
 
+String a,pd,qd,pb,qb; 
+char head,frst,scnd;
 
 void setup()
 {
@@ -107,9 +109,12 @@ delay(100);
     while(Serial.available()) {
       a= Serial.readString();
     }
+    Serial.println(a);
+    Serial.println("Pasa While");
     head = a.charAt(0);
     frst = a.charAt(1);
     scnd = a.charAt(10);
+    Serial.println(head);
     switch (head){
       case 'd':
         pd=a.substring(2,9);
@@ -118,13 +123,14 @@ delay(100);
         qd=a.substring(10,15);
         Serial.println("Qd =");
         Serial.println(qd);
+        break;
       case 'b':
         pb=a.substring(2,9);
-        Serial.println("Pd =");
-        Serial.println(pd);
-        qb=a.substring(10,15);
-        Serial.println("Qd =");
-        Serial.println(qd);
+        Serial.println("Pb =");
+        Serial.println(pb);
+        qb=a.substring(10,17);
+        Serial.println("Qb =");
+        Serial.println(qb);
       break;
     }
     
