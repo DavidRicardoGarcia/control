@@ -89,6 +89,7 @@ void mensaje2(CAN_FRAME *frame) {
 }
 
 void receiveRaspData() {
+  while (Serial.available() == 0) {}
   while (Serial.available()) {
     a = Serial.readString();
   }
@@ -133,7 +134,6 @@ void loop() {
   //}
   delay(100);
 //  Serial.println("Pase poaca");
-  while (Serial.available() == 0) {}
   receiveRaspData();
 
 }
