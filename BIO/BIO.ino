@@ -87,7 +87,7 @@ void SendDataSensores(int ident,int a )
 
 
 void loop() {
-SendDataSensores(0x09,-5000000);
+//SendDataSensores(0x09,-5000000);
 //float a=101;
 //      an=String(a,HEX);
 //   Serial.println(an);
