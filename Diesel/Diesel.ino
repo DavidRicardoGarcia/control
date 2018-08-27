@@ -8,11 +8,13 @@
 
 #define CAN0_TRANSFER_ID    0x05
 #define CAN_FRAME_SEND_ID   0x16
-#define MAX_CAN_FRAME_DATA_LEN   16
+#define MAX_CAN_FRAME_DATA_LEN   8
 
 int incomingByte = 0; 
 String inString="";
 String an=" ";
+float vl=0,pd=0,qd=0;
+
 void setup()
 {
 
@@ -34,57 +36,52 @@ Can0.begin(CAN_BPS_250K);
 
 }
 
-void printFrame(CAN_FRAME *frame, int filter) {
-   Serial.print("Fltr: ");
-   if (filter > -1) Serial.print(filter);
-   else Serial.print("???");
-   Serial.print(" ID: 0x");
-   Serial.print(frame->id, HEX);
-   Serial.print(" Len: ");
-   Serial.print(frame->length);
-   Serial.print(" Data: 0x");
-   for (int count = 0; count < frame->length; count++) {
-       Serial.print(frame->data.bytes[count], HEX);
-       Serial.print(" ");
-   }
-   Serial.print("\r\n");
-}
 
-
-void SendDataSensores(int ident,float a , float b )
+void SendDataSensores(int ident,int a )
 {
   CAN_FRAME outgoing;
   outgoing.id = ident;
   outgoing.extended = false;
   outgoing.priority = 0; //0-15 lower is higher priority
   outgoing.length = MAX_CAN_FRAME_DATA_LEN;
-  
-//  outgoing.data.byte[0] = 0x01;
-//  outgoing.data.byte[1] = 0x01;
-//  outgoing.data.byte[2] = 0x02;
-  outgoing.data.low = 0x00;
-  outgoing.data.high = 0x00;
+  outgoing.data.low = a;
   Can0.sendFrame(outgoing);
   
 }
 
+void setvl(CAN_FRAME *frame) {
+
+  vl=int(frame->data.low);
+  Serial.println(vl);
+  
+}
+
+void setpd(CAN_FRAME *frame) {
+
+  pd=int(frame->data.low);
+  
+}
+
+void setqd(CAN_FRAME *frame) {
+
+  qd=int(frame->data.low);
+  
+}
+
  void mensaje0(CAN_FRAME *frame){
- //  Serial.println("llego el mensaje 0");
-  // printFrame(frame, 5);
+  setvl(frame);
    
   }
 
 
  void mensaje1(CAN_FRAME *frame){
-  // Serial.println("llego el mensaje 1");
-  // printFrame(frame, 5);
+  setpd(frame);;
     
   }
 
  void mensaje2(CAN_FRAME *frame){
- //  Serial.println("llego el mensaje 2");
-  // printFrame(frame, 5);
-    
+  setqd(frame);
+     
   }
 
 

@@ -8,11 +8,14 @@
 
 #define CAN0_TRANSFER_ID    0x05
 #define CAN_FRAME_SEND_ID   0x16
-#define MAX_CAN_FRAME_DATA_LEN   16
+#define MAX_CAN_FRAME_DATA_LEN   8
 
 int incomingByte = 0; 
 String inString="";
 String an=" ";
+float pm=0,qm=0,soc=0;
+
+
 void setup()
 {
 
@@ -34,23 +37,6 @@ Can0.begin(CAN_BPS_250K);
 
 }
 
-void printFrame(CAN_FRAME *frame, int filter) {
-   Serial.print("Fltr: ");
-   if (filter > -1) Serial.print(filter);
-   else Serial.print("???");
-   Serial.print(" ID: 0x");
-   Serial.print(frame->id, HEX);
-   Serial.print(" Len: ");
-   Serial.print(frame->length);
-   Serial.print(" Data: 0x");
-   for (int count = 0; count < frame->length; count++) {
-       Serial.print(frame->data.bytes[count], HEX);
-       Serial.print(" ");
-   }
-   Serial.print("\r\n");
-}
-
-
 void SendDataSensores(int ident,int a )
 {
   CAN_FRAME outgoing;
@@ -59,37 +45,50 @@ void SendDataSensores(int ident,int a )
   outgoing.priority = 0; //0-15 lower is higher priority
   outgoing.length = MAX_CAN_FRAME_DATA_LEN;
   outgoing.data.low = a;
-//  outgoing.data.byte[0] = 0x01;
-//  outgoing.data.byte[1] = 0x01;
-//  outgoing.data.byte[2] = 0x02;
-//  outgoing.data.low = a;
-  outgoing.data.high = 0;
   Can0.sendFrame(outgoing);
   
 }
 
+
+void setpm(CAN_FRAME *frame) {
+
+  pm=int(frame->data.low);
+  Serial.println(pm);
+  
+}
+
+void setqm(CAN_FRAME *frame) {
+
+  qm=int(frame->data.low);
+  
+}
+
+void setsoc(CAN_FRAME *frame) {
+
+  soc=int(frame->data.low);
+  
+}
+
+
  void mensaje0(CAN_FRAME *frame){
- //  Serial.println("llego el mensaje 0");
-  // printFrame(frame, 5);
+ setpm(frame);
    
   }
 
 
  void mensaje1(CAN_FRAME *frame){
-  // Serial.println("llego el mensaje 1");
-  // printFrame(frame, 5);
+ setqm(frame);
     
   }
 
  void mensaje2(CAN_FRAME *frame){
- //  Serial.println("llego el mensaje 2");
-  // printFrame(frame, 5);
+ setsoc(frame);
     
   }
 
 
 void loop() {
-SendDataSensores(0x01,1);
+SendDataSensores(0x01,-10000000);
 //float a=101;
 //      an=String(a,HEX);
 //   Serial.println(an);
