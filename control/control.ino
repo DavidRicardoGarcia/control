@@ -101,4 +101,34 @@ SendDataSensores(0x01,-10000000);
 //    }
 //}
 delay(100);
+
+  if (Serial.available()) {
+    
+    while(Serial.available()) {
+      a= Serial.readString();
+    }
+    head = a.charAt(0);
+    frst = a.charAt(1);
+    scnd = a.charAt(10);
+    switch (head){
+      case 'd':
+        pd=a.substring(2,9);
+        Serial.println("Pd =");
+        Serial.println(pd);
+        qd=a.substring(10,15);
+        Serial.println("Qd =");
+        Serial.println(qd);
+      case 'b':
+        pb=a.substring(2,9);
+        Serial.println("Pd =");
+        Serial.println(pd);
+        qb=a.substring(10,15);
+        Serial.println("Qd =");
+        Serial.println(qd);
+      break;
+    }
+    
+  }
+
+
 }
