@@ -2,6 +2,7 @@
 #include "variant.h"
 #include <due_can.h>
 #include <DueTimer.h>
+#include <stdio.h>
 
 //Leave defined if you use native port, comment if using programming port
 //#define Serial SerialUSB
@@ -13,10 +14,14 @@
 int incomingByte = 0;
 String inString = "";
 String an = " ";
-float pm = 0, qm = 0, soc = 0;
+int pm = 0, qm = 0, soc = 0;
 
-String a, pd, qd, pb, qb;
-char head, frst, scnd;
+String a, spd, sqd, spb, sqb;
+int pd, qd, pb, qb;
+char frst, scnd, thrd, frth;
+
+char aa, tramRasp[25];
+bool p = false, q = false, s = false;
 
 void setup()
 {
@@ -39,7 +44,7 @@ void setup()
 
 }
 
-void SendDataSensores(int ident, int a )
+void SendData(int ident, int a )
 {
   CAN_FRAME outgoing;
   outgoing.id = ident;
@@ -55,20 +60,23 @@ void SendDataSensores(int ident, int a )
 void setpm(CAN_FRAME *frame) {
 
   pm = int(frame->data.low);
-  Serial.println(pm);
-
+  //Serial.println(pm);
+  p = true;
+  sendToRasp();
 }
 
 void setqm(CAN_FRAME *frame) {
 
   qm = int(frame->data.low);
-
+  q = true;
+  sendToRasp();
 }
 
 void setsoc(CAN_FRAME *frame) {
 
   soc = int(frame->data.low);
-
+  s = true;
+  sendToRasp();
 }
 
 
@@ -88,52 +96,48 @@ void mensaje2(CAN_FRAME *frame) {
 
 }
 
-void receiveRaspData() {
-  while (Serial.available() == 0) {}
-  while (Serial.available()) {
-    a = Serial.readString();
+void sendToRasp() {
+  if (p && q && s) {
+    sprintf(tramRasp, "p%07dq%07ds%07de", pm, qm, soc);
+    Serial.print(tramRasp);
+    p = false;
+    q = false;
+    s = false;
   }
-//  Serial.println(a);
-//  Serial.println("Pasa While");
-  head = a.charAt(0);
-  frst = a.charAt(1);
-  scnd = a.charAt(10);
-  //Serial.println(head);
-  switch (head) {
-    case 'd':
-      pd = a.substring(2, 9);
-//      Serial.println("Pd =");
-//      Serial.println(pd);
-      qd = a.substring(10, 17);
-//      Serial.println("Qd =");
-//      Serial.println(qd);
-      break;
-    case 'b':
-      pb = a.substring(2, 9);
-//      Serial.println("Pb =");
-//      Serial.println(pb);
-      qb = a.substring(10, 17);
-//      Serial.println("Qb =");
-//      Serial.println(qb);
-      break;
+}
+
+void receiveRaspData() {
+
+  while (Serial.available() == 0) {}
+  a = "";
+  while (Serial.available() > 0) {
+    aa = Serial.read();
+    a += aa;
+    if (aa == '\n') {
+      frst = a.charAt(0);
+      scnd = a.charAt(8);
+      thrd = a.charAt(16);
+      frth = a.charAt(24);
+      //Serial.println(head);
+      if (frst == 'a') {
+        spb = a.substring(1, 8);
+        pb = spb.toInt();
+        sqb = a.substring(9, 16);
+        qb = sqb.toInt();
+        spd = a.substring(17, 24);
+        pd = spd.toInt();
+        sqd = a.substring(25, 32);
+        qd = sqd.toInt();
+      }
+    }
   }
 }
 
 void loop() {
-  SendDataSensores(0x01, -10000000);
-  //float a=101;
-  //      an=String(a,HEX);
-  //   Serial.println(an);
-  //  while(Serial.available()>0){
-  //    char a=Serial.read();
-  //    inString += a;
-  //    if (a == '\n') {
-  //      Serial.println(inString);
-  //      inString = "";
-  //    }
-  //}
-  delay(100);
-//  Serial.println("Pase poaca");
-  receiveRaspData();
 
+  receiveRaspData();
+  SendData(0x01, pb);
+  SendData(0x02, qb);
+  SendData(0x04, pd);
+  SendData(0x05, qd);
 }

@@ -2,6 +2,7 @@
 #include "variant.h"
 #include <due_can.h>
 #include <DueTimer.h>
+#include <stdio.h>
 
 //Leave defined if you use native port, comment if using programming port
 //#define Serial SerialUSB
@@ -11,9 +12,13 @@
 #define MAX_CAN_FRAME_DATA_LEN   8
 
 int incomingByte = 0;
-float pb = 0, qb = 0, vl = 0;
+int pb = 0, qb = 0, vl = 0;
 
-String i1;
+char aa, tramRasp[25];
+String si1;
+int i1;
+
+bool p = false, q = false, v = false;
 
 void setup()
 {
@@ -39,23 +44,27 @@ void setup()
 void setpb(CAN_FRAME *frame) {
 
   pb = int(frame->data.low);
-  Serial.println(pb);
-
+  //Serial.println(pb);
+  p = true;
+  sendToRasp();
 }
 
 void setqb(CAN_FRAME *frame) {
 
   qb = int(frame->data.low);
+  q = true;
+  sendToRasp();
 
 }
 
 void setvl(CAN_FRAME *frame) {
 
   vl = int(frame->data.low);
-
+  v = true;
+  sendToRasp();
 }
 
-void SendDataSensores(int ident, int a )
+void SendData(int ident, int a )
 {
   CAN_FRAME outgoing;
   outgoing.id = ident;
@@ -86,27 +95,31 @@ void mensaje2(CAN_FRAME *frame) {
 
 }
 
+void sendToRasp() {
+  if (v && p && q) {
+    sprintf(tramRasp, "v%07dp%07dq%07de", vl, pb, qb);
+    Serial.print(tramRasp);
+    v = false;
+    p = false;
+    q = false;
+  }
+}
+
 void receiveRaspData() {
   while (Serial.available() == 0) {}
-  while (Serial.available()) {
-    i1 = Serial.readString();
+  si1 = "";
+  while (Serial.available() > 0) {
+    aa = Serial.read();
+    si1 += aa;
+    if (aa == '\n') {
+      i1 = si1.toInt();
+    }
   }
 }
 
 void loop() {
-  //SendDataSensores(0x09,-5000000);
-  //float a=101;
-  //      an=String(a,HEX);
-  //   Serial.println(an);
-  //  while(Serial.available()>0){
-  //    char a=Serial.read();
-  //    inString += a;
-  //    if (a == '\n') {
-  //      Serial.println(inString);
-  //      inString = "";
-  //    }
-  //}
-  delay(100);
+
   receiveRaspData();
+  SendData(0x06, i1);
 
 }
