@@ -20,7 +20,7 @@ String a, spd, sqd, spb, sqb;
 int pd, qd, pb, qb;
 char frst, scnd, thrd, frth;
 
-char aa, tramRasp[25];
+char aa, tramRasp[26];
 bool p = false, q = false, s = false;
 
 void setup()
@@ -98,7 +98,7 @@ void mensaje2(CAN_FRAME *frame) {
 
 void sendToRasp() {
   if (p && q && s) {
-    sprintf(tramRasp, "p%07dq%07ds%07de", pm, qm, soc);
+    sprintf(tramRasp, "fp%07dq%07ds%07de", pm, qm, soc);
     Serial.print(tramRasp);
     p = false;
     q = false;

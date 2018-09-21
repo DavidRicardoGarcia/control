@@ -19,7 +19,7 @@ String a, spm, sqm, svl;
 int pm, qm, vl;
 char frst, scnd, thrd;
 
-char aa, tramRasp[25];
+char aa, tramRasp[26];
 bool bi1 = false, bi2 = false, bi3 = false;
 
 void setup()
@@ -97,7 +97,7 @@ void mensaje2(CAN_FRAME *frame) {
 
 void sendToRasp() {
   if (bi1 && bi2 && bi3) {
-    sprintf(tramRasp, "b%07dd%07dp%07de", i1, i2, i3);
+    sprintf(tramRasp, "fb%07dd%07dp%07de", i1, i2, i3);
     Serial.print(tramRasp);
     bi1 = false;
     bi2 = false;
@@ -117,7 +117,7 @@ void receiveRaspData() {
       scnd = a.charAt(8);
       thrd = a.charAt(16);
       //Serial.println(head);
-      if (frst == 'a') {
+      if (frst == 'p') {
         spm = a.substring(1, 8);
         pm = spm.toInt();
         sqm = a.substring(9, 16);
@@ -127,9 +127,24 @@ void receiveRaspData() {
       }
     }
   }
+//  Serial.print("Pm: ");
+//  Serial.println(pm);
+//  Serial.print("Qm: ");
+//  Serial.println(qm);
+//  Serial.print("Vl: ");
+//  Serial.println(vl);
 }
 
 void loop() {
+  
+  bi1 = true;
+  bi2 = true;
+  bi3 = true;
+  i1 = 123;
+  i2 = 456;
+  i3 = 789;
+  sendToRasp();
+  delay(10);
   receiveRaspData();
   SendData(0x01, pm);
   SendData(0x02, qm);

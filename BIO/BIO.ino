@@ -14,7 +14,7 @@
 int incomingByte = 0;
 int pb = 0, qb = 0, vl = 0;
 
-char aa, tramRasp[25];
+char aa, tramRasp[26];
 String si1;
 int i1;
 
@@ -97,7 +97,7 @@ void mensaje2(CAN_FRAME *frame) {
 
 void sendToRasp() {
   if (v && p && q) {
-    sprintf(tramRasp, "v%07dp%07dq%07de", vl, pb, qb);
+    sprintf(tramRasp, "fv%07dp%07dq%07de", vl, pb, qb);
     Serial.print(tramRasp);
     v = false;
     p = false;

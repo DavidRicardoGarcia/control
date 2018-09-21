@@ -14,9 +14,9 @@
 int incomingByte = 0;
 String inString = "";
 String an = " ";
-int vl = 0;
+float vl = 0;
 
-char aa, tramRasp[9];
+char aa, tramRasp[10];
 String a, si3, ssoc;
 int i3, soc;
 char frst, scnd;
@@ -67,7 +67,7 @@ void setvl(CAN_FRAME *frame) {
 
 void sendToRasp() {
   if (v) {
-    sprintf(tramRasp, "v%07de", vl);
+    sprintf(tramRasp, "fv%07de", vl);
     Serial.print(tramRasp);
     v = false;
   }
