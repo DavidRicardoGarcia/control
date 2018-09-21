@@ -14,7 +14,7 @@
 int incomingByte = 0;
 String inString = "";
 String an = " ";
-float vl = 0;
+int vl = 0;
 
 char aa, tramRasp[10];
 String a, si3, ssoc;
